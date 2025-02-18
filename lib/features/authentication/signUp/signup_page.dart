@@ -53,7 +53,7 @@ class _SignupPageState extends State<SignupPage> {
       ),
       child: Column(
         children: [
-          const SizedBox(height: 30),
+          const SizedBox(height: 10),
           _buildWelcomeBackText(),
           const SizedBox(height: 20),
           _buildTextfield(AppTexts.textFullname),
@@ -67,6 +67,11 @@ class _SignupPageState extends State<SignupPage> {
           _checkAndForgetPassword(controller),
           const SizedBox(height: 20),
           _buildButton(),
+          const SizedBox(height: 20),
+
+          _buildSignInWithText(),
+          const SizedBox(height: 20),
+          _buildSocial(),
         ],
       ),
     );
@@ -141,6 +146,39 @@ class _SignupPageState extends State<SignupPage> {
         ),
       ),
       child: Text("SignUp", style: TextStyle(color: AppColors.whteColors)),
+    );
+  }
+
+  Widget _buildSocial() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(AppImage.faceImage, width: 40, height: 40),
+        const SizedBox(width: 40),
+        Image.asset(AppImage.twitterImage, width: 40, height: 40),
+        const SizedBox(width: 40),
+
+        Image.asset(AppImage.gitImage, width: 40, height: 40),
+        const SizedBox(width: 40),
+
+        Image.asset(AppImage.googleImage, width: 40, height: 40),
+      ],
+    );
+  }
+
+  Widget _buildSignInWithText() {
+    return Padding(
+      padding: AppSize.lignPadding,
+      child: Row(
+        children: [
+          Expanded(child: Divider(thickness: 1, indent: 0)),
+          Padding(
+            padding: AppSize.textlignPadding,
+            child: Text("Sign in With"),
+          ),
+          Expanded(child: Divider(thickness: 1, indent: 0)),
+        ],
+      ),
     );
   }
 }

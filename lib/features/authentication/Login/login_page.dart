@@ -58,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
       child: Column(
         children: [
-          const SizedBox(height: 30),
+          const SizedBox(height: 10),
           _buildWelcomeBackText(),
           const SizedBox(height: 20),
           _buildTextfield(AppTexts.textUsername, Appicons.userIcon),
@@ -73,6 +73,10 @@ class _LoginPageState extends State<LoginPage> {
           _checkAndForgetPassword(),
           const SizedBox(height: 20),
           _buildButton(),
+          const SizedBox(height: 30),
+          _buildSignInWithText(),
+          const SizedBox(height: 30),
+          _buildSocial(),
         ],
       ),
     );
@@ -101,6 +105,7 @@ class _LoginPageState extends State<LoginPage> {
         obscureText: isPassword,
         decoration: InputDecoration(
           labelText: label,
+
           suffixIcon: Icon(icon),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSize.fieldBorder),
@@ -160,6 +165,39 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
       child: Text("Login", style: TextStyle(color: AppColors.whteColors)),
+    );
+  }
+
+  Widget _buildSocial() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(AppImage.faceImage, width: 40, height: 40),
+        const SizedBox(width: 40),
+        Image.asset(AppImage.twitterImage, width: 40, height: 40),
+        const SizedBox(width: 40),
+
+        Image.asset(AppImage.gitImage, width: 40, height: 40),
+        const SizedBox(width: 40),
+
+        Image.asset(AppImage.googleImage, width: 40, height: 40),
+      ],
+    );
+  }
+
+  Widget _buildSignInWithText() {
+    return Padding(
+      padding: AppSize.lignPadding,
+      child: Row(
+        children: [
+          Expanded(child: Divider(thickness: 1, indent: 0)),
+          Padding(
+            padding: AppSize.textlignPadding,
+            child: Text("Sign in With"),
+          ),
+          Expanded(child: Divider(thickness: 1, indent: 0)),
+        ],
+      ),
     );
   }
 }

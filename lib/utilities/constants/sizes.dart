@@ -25,6 +25,14 @@ class AppSize {
   //borderRadius With Textfelds
   static const double fieldBorder = 10;
 
+  /// Two Alignes in Text Sign In With Markay Geesaha Kasoo dhawaanaayann
+  static const EdgeInsets lignPadding = EdgeInsets.symmetric(horizontal: 30);
+
+  //   /// Two Alignes in Text Sign In With Markay qoraalka Kasoo dhawaanaayann
+  static const EdgeInsets textlignPadding = EdgeInsets.symmetric(
+    horizontal: 10,
+  );
+
   /// Padding With textFields
   static const EdgeInsets fieldPadding = EdgeInsets.symmetric(horizontal: 16);
 
