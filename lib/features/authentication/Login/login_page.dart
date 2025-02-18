@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:login_design2/features/authentication/Forget/forgetpassword_page.dart';
+import 'package:login_design2/features/authentication/signUp/signup_page.dart';
 import 'package:login_design2/features/controller/login/login_controller.dart';
 import 'package:login_design2/utilities/constants/colors.dart';
 import 'package:login_design2/utilities/constants/icons.dart';
@@ -77,6 +78,8 @@ class _LoginPageState extends State<LoginPage> {
           _buildSignInWithText(),
           const SizedBox(height: 30),
           _buildSocial(),
+          const SizedBox(height: 20),
+          _Anaccount(),
         ],
       ),
     );
@@ -106,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
         decoration: InputDecoration(
           labelText: label,
 
-          suffixIcon: Icon(icon),
+          suffixIcon: Icon(icon, color: AppColors.appColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSize.fieldBorder),
           ),
@@ -198,6 +201,21 @@ class _LoginPageState extends State<LoginPage> {
           Expanded(child: Divider(thickness: 1, indent: 0)),
         ],
       ),
+    );
+  }
+
+  Widget _Anaccount() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text("Don,t have Acoount?"),
+        TextButton(
+          onPressed: () {
+            Get.to(() => SignupPage());
+          },
+          child: Text("SignUp"),
+        ),
+      ],
     );
   }
 }
