@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:login_design2/features/authentication/Login/login_page.dart';
 import 'package:login_design2/features/controller/login/login_controller.dart';
 import 'package:login_design2/utilities/constants/colors.dart';
@@ -15,6 +18,52 @@ class ForgetpasswordPage extends StatefulWidget {
 }
 
 class _ForgetpasswordPageState extends State<ForgetpasswordPage> {
+  final TextEditingController _emailController = TextEditingController();
+  String errorMessage = '';
+  void forgetPassword({required String email}) {
+    var url = "http://192.168.1.3:8008/api/auth/send-forgot-password-code";
+    var body = {"email": email};
+
+    // Send HTTP POST request
+    http
+        .patch(
+          Uri.parse(url),
+          headers: {"Content-Type": "application/json"},
+          body: json.encode(body),
+        )
+        .then((response) {
+          print("Response Code: ${response.statusCode}");
+          print("Response Body: ${response.body}");
+          if (response.statusCode == 200) {
+            var responseBody = json.decode(response.body);
+
+            if (responseBody["success"] == true) {
+              setState(() {
+                errorMessage = ""; // Clear the error message
+              });
+              // Get.to(() => LoginPage()); // Navigate to dashboard
+              print("Forget Password successfully");
+              _emailController.clear();
+            } else {
+              setState(() {
+                errorMessage = "Invalid credentials. Please try again.";
+              });
+            }
+          } else {
+            setState(() {
+              errorMessage = "Failed to login. Please try again later.";
+            });
+          }
+        })
+        .catchError((error) {
+          setState(() {
+            errorMessage =
+                "An error occurred. Please try again."; // Catch any error in the request
+          });
+          print("Error during HTTP request: $error");
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     final LoginController controller = Get.put(LoginController());
@@ -57,7 +106,7 @@ class _ForgetpasswordPageState extends State<ForgetpasswordPage> {
           const SizedBox(height: 30),
           _buildWelcomeBackText(),
           const SizedBox(height: 30),
-          _buildTextfield(AppTexts.textFullname),
+          _buildTextfield(AppTexts.textFullname, controller: _emailController),
           const SizedBox(height: 30),
           _buildButton(),
           _buildBackToLoginButton(),
@@ -78,11 +127,15 @@ class _ForgetpasswordPageState extends State<ForgetpasswordPage> {
     );
   }
 
-  Widget _buildTextfield(String label, {bool isPassword = false}) {
+  Widget _buildTextfield(
+    String label, {
+
+    required TextEditingController controller,
+  }) {
     return Padding(
       padding: AppSize.fieldPadding,
       child: TextField(
-        obscureText: isPassword,
+        controller: controller,
         decoration: InputDecoration(
           labelText: label,
           border: OutlineInputBorder(
@@ -96,6 +149,7 @@ class _ForgetpasswordPageState extends State<ForgetpasswordPage> {
   Widget _buildButton() {
     return ElevatedButton(
       onPressed: () {
+        forgetPassword(email: _emailController.text.trim());
         // Get.to(() => LoginPage());
       },
       style: ElevatedButton.styleFrom(
@@ -115,7 +169,7 @@ class _ForgetpasswordPageState extends State<ForgetpasswordPage> {
   Widget _buildBackToLoginButton() {
     return TextButton(
       onPressed: () {
-        Get.to(() => LoginPage()); // Navigate to the Login page
+        // Get.to(() => LoginPage()); // Navigate to the Login page
       },
       child: Text(
         "Back to Login",
