@@ -43,9 +43,14 @@ class AppSize {
   );
 
   // Container For Intuu kor iyo geesaha Kasoo sikanaayo
-  static const double containerTopPosition = 250;
+  static const double containerTopPosition = 200;
   static const double containerLeftPosition = 0;
   static const double containerRightPosition = 0;
+
+  /// intuu kor kasoo sikanaayo login
+  static const double loginContainer = 250;
+  static const double loginContainerleft = 0;
+  static const double loginContainerright = 0;
 
   // Text In welcom position And textFileds position
   static const double textTopPosition = 290;

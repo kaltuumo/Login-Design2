@@ -10,7 +10,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Login Design',
-      initialRoute: '/onb',
+      initialRoute: '/onboarding',
       routes: {
         '/login': (context) => LoginPage(),
         '/onboarding': (context) => OnboardingPage(),

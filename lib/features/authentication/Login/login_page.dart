@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:login_design2/features/authentication/Forget/forgetpassword_page.dart';
+import 'package:login_design2/features/authentication/dashboard_page.dart';
 import 'package:login_design2/features/authentication/signUp/signup_page.dart';
 import 'package:login_design2/features/controller/login/login_controller.dart';
 import 'package:login_design2/utilities/constants/colors.dart';
@@ -17,6 +21,63 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  // Text Editing Controllers
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  String errorMessage = ''; // Error message variable
+  void login({required String email, required String password}) {
+    if (!_formKey.currentState!.validate()) {
+      return; // If form is invalid, stop execution
+    }
+
+    setState(() {
+      errorMessage = ''; // Clear previous error messages
+    });
+
+    var url = "http://192.168.1.3:8008/api/auth/signin";
+    var body = {"email": email, "password": password};
+
+    // Send HTTP POST request
+    http
+        .post(
+          Uri.parse(url),
+          headers: {"Content-Type": "application/json"},
+          body: json.encode(body),
+        )
+        .then((response) {
+          if (response.statusCode == 200) {
+            var responseBody = json.decode(response.body);
+
+            if (responseBody["success"] == true) {
+              setState(() {
+                errorMessage = ""; // Clear the error message
+              });
+              Get.to(() => DashboardPage()); // Navigate to dashboard
+              print("User login successfully");
+              _emailController.clear();
+              _passwordController.clear();
+            } else {
+              setState(() {
+                errorMessage = "Invalid credentials. Please try again.";
+              });
+            }
+          } else {
+            setState(() {
+              errorMessage = "Failed to login. Please try again later.";
+            });
+          }
+        })
+        .catchError((error) {
+          setState(() {
+            errorMessage =
+                "An error occurred. Please try again."; // Catch any error in the request
+          });
+          print("Error during HTTP request: $error");
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     final LoginController controller = Get.put(LoginController());
@@ -38,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
         body: Stack(
           children: [
             Positioned(
-              top: AppSize.containerTopPosition, // Use the constant value
+              top: AppSize.loginContainer, // Use the constant value
               left: AppSize.containerLeftPosition,
               right: AppSize.containerRightPosition,
               child: _builTop(controller),
@@ -50,37 +111,54 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _builTop(LoginController controller) {
-    return Container(
-      width: AppSize.mediaSize.width,
-      height: AppSize.mediaSize.height * 0.8,
-      decoration: BoxDecoration(
-        color: AppColors.whteColors,
-        borderRadius: AppSize.kTopRounderBiedr,
-      ),
-      child: Column(
-        children: [
-          const SizedBox(height: 10),
-          _buildWelcomeBackText(),
-          const SizedBox(height: 20),
-          _buildTextfield(AppTexts.textUsername, Appicons.userIcon),
-          const SizedBox(height: 20),
-          _buildTextfield(
-            AppTexts.textPassword,
-            Appicons.passIcon,
-            isPassword: true,
-          ),
-          const SizedBox(height: 20),
+    return Form(
+      key: _formKey,
+      child: Container(
+        width: AppSize.mediaSize.width,
+        height: AppSize.mediaSize.height * 0.8,
+        decoration: BoxDecoration(
+          color: AppColors.whteColors,
+          borderRadius: AppSize.kTopRounderBiedr,
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 10),
+            _buildWelcomeBackText(),
+            const SizedBox(height: 20),
+            _buildTextfield(
+              controller: _emailController,
+              label: AppTexts.textemail,
+              icon: Appicons.userIcon,
+            ),
+            const SizedBox(height: 20),
+            _buildTextfield(
+              controller: _passwordController,
+              label: AppTexts.textPassword,
+              icon: Appicons.passIcon,
+              isPassword: true,
+            ),
+            const SizedBox(height: 20),
 
-          _checkAndForgetPassword(),
-          const SizedBox(height: 20),
-          _buildButton(),
-          const SizedBox(height: 30),
-          _buildSignInWithText(),
-          const SizedBox(height: 30),
-          _buildSocial(),
-          const SizedBox(height: 20),
-          _Anaccount(),
-        ],
+            if (errorMessage.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  errorMessage,
+                  style: TextStyle(color: Colors.red, fontSize: 14),
+                ),
+              ),
+            const SizedBox(height: 10),
+            _checkAndForgetPassword(),
+            const SizedBox(height: 20),
+            _buildButton(),
+            const SizedBox(height: 30),
+            _buildSignInWithText(),
+            const SizedBox(height: 30),
+            _buildSocial(),
+            const SizedBox(height: 20),
+            _Anaccount(),
+          ],
+        ),
       ),
     );
   }
@@ -97,14 +175,16 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildTextfield(
-    String label,
-    IconData icon, {
+  Widget _buildTextfield({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
     bool isPassword = false,
   }) {
     return Padding(
       padding: AppSize.fieldPadding,
-      child: TextField(
+      child: TextFormField(
+        controller: controller,
         obscureText: isPassword,
         decoration: InputDecoration(
           labelText: label,
@@ -114,6 +194,12 @@ class _LoginPageState extends State<LoginPage> {
             borderRadius: BorderRadius.circular(AppSize.fieldBorder),
           ),
         ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return "$label is required"; // This will show error below the field
+          }
+          return null;
+        },
       ),
     );
   }
@@ -158,7 +244,10 @@ class _LoginPageState extends State<LoginPage> {
   Widget _buildButton() {
     return ElevatedButton(
       onPressed: () {
-        Get.to(() => LoginPage());
+        login(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        );
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.appColor,
