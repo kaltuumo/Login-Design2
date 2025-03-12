@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:login_design2/features/authentication/Login/login_page.dart';
-import 'package:login_design2/features/authentication/dashboard_page.dart';
+
 import 'package:login_design2/features/controller/login/login_controller.dart';
 import 'package:login_design2/utilities/constants/colors.dart';
 import 'package:login_design2/utilities/constants/images.dart';
